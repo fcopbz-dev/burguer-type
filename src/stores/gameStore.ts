@@ -1,9 +1,8 @@
 import { INITIAL_TIME } from '@/constans/constans'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { TEXTS_TO_TYPE } from '@/constans/texts'
 
-export type GameStatus = 'waitingForStart' | 'inGame' | 'paused' | 'end' | 'restart'
+export type GameStatus = 'waitingForStart' | 'inGame' | 'paused' | 'end'
 export interface GameStats {
   time: number
   letters: string
@@ -12,67 +11,78 @@ export interface GameStats {
 
 export const useGameStore = defineStore('game', () => {
   const gameStatus = ref<GameStatus>('waitingForStart')
-  const currentTime = ref(0)
+  const currentTime = ref(INITIAL_TIME)
   const words = ref<string[]>([])
   const errorCount = ref(0)
   const gamesStats = ref<GameStats[]>([])
+  let timer: number | undefined
+
+  const startTimer = () => {
+    timer = setInterval(() => {
+      if (currentTime.value > 0) {
+        currentTime.value--
+      }
+    }, 1000)
+  }
+
+  const stopTimer = () => {
+    clearInterval(timer)
+  }
 
   const incrementErrorCount = () => {
     errorCount.value++
   }
 
-  const setCurrentTime = (time: number) => {
-    currentTime.value = time
-  }
-
-  const startGame = () => {
+  const startGame = (text: string) => {
+    console.log('START GAME')
     gameStatus.value = 'inGame'
     currentTime.value = INITIAL_TIME
-    words.value = TEXTS_TO_TYPE[0].trim().split(' ')
+    words.value = text.trim().split(' ')
     errorCount.value = 0
+    startTimer()
   }
 
   const endGame = () => {
+    console.log('END GAME')
+    stopTimer()
     gamesStats.value.push({
-      time: currentTime.value,
+      time: INITIAL_TIME - currentTime.value,
       letters: words.value.join(''),
       errors: errorCount.value,
     })
     gameStatus.value = 'end'
-    currentTime.value = INITIAL_TIME
-    words.value = []
   }
 
-  const resetGame = () => {
-    gameStatus.value = 'restart'
-    currentTime.value = INITIAL_TIME
-    words.value = []
+  const resetGame = (text: string) => {
+    console.log('RESET GAME')
+    stopTimer()
+    startGame(text)
   }
 
-  const pauseGame = () => {
-    console.log('Game Paused')
-    gameStatus.value = 'paused'
-  }
-
-  const resumeGame = () => {
-    console.log('Game Resumed')
-    gameStatus.value = 'inGame'
+  const togglePause = () => {
+    console.log('TOGGLE PAUSE')
+    if (gameStatus.value === 'inGame') {
+      gameStatus.value = 'paused'
+      stopTimer()
+    } else if (gameStatus.value === 'paused') {
+      gameStatus.value = 'inGame'
+      startTimer()
+    }
   }
 
   return {
-    // Getters
+    // State
     gameStatus,
     currentTime,
     words,
     errorCount,
-    // Methods
-    setCurrentTime,
+    gamesStats,
+
+    // Actions
     incrementErrorCount,
-    // Status Methods
     startGame,
     endGame,
     resetGame,
-    pauseGame,
-    resumeGame,
+    togglePause,
   }
 })

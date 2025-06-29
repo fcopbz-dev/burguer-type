@@ -22,13 +22,6 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { useGameStore } from '@/stores/gameStore'
-
-onMounted(() => {
-  useGameStore().resetGame()
-})
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>

@@ -32,6 +32,7 @@
 </template>
 
 <script setup lang="ts">
+import { TEXTS_TO_TYPE } from '@/constans/texts'
 import { routes } from '@/router'
 import { useGameStore } from '@/stores/gameStore'
 import { computed } from 'vue'
@@ -56,7 +57,7 @@ const buttons = [
 
 function newGame(): void {
   if (currentRouteName.value === routes.type) {
-    gameStore.resetGame()
+    gameStore.resetGame(TEXTS_TO_TYPE[0])
   } else {
     router.push({ name: routes.type })
   }
