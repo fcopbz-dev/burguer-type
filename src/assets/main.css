@@ -1,1 +1,59 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-background: #f9f4e3;
+  --color-text: #7e5129;
+  --color-primary: #ea804f;
+  --color-secondary: #c99345;
+}
+
+body,
+#app {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* TYPE LETTERS */
+.word {
+}
+.letter {
+  position: relative;
+  font-family: monospace;
+  display: inline-flex;
+  width: 1rem;
+  height: 2rem;
+  &.active::before {
+    content: '_';
+    position: absolute;
+    animation: 1s blink infinite ease-in-out;
+    @apply text-yellow-500;
+  }
+  &.completed::before {
+    content: '_';
+    position: absolute;
+    left: 1rem;
+    animation: 1s blink infinite ease-in-out;
+    @apply text-yellow-500;
+  }
+
+  &.error {
+    @apply text-red-600 font-bold;
+  }
+
+  &.success {
+    @apply text-primary font-bold;
+  }
+}
+
+@keyframes blink {
+  0%,
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0;
+  }
+}
